@@ -1,0 +1,1 @@
+docker run --publish 80:80 integrate_service_sync

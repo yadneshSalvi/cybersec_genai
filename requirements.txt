@@ -1,0 +1,16 @@
+fastapi==0.103.1
+fastjsonschema==2.16.3
+langchain==0.0.286
+openai==0.27.7
+openapi-schema-pydantic==1.2.4
+openpyxl==3.1.2
+pandas==2.0.1
+pydantic==1.10.9
+tiktoken==0.4.0
+starlette==0.27.0
+scikit-learn==1.2.2
+datetime==5.1
+asyncio==3.4.3
+anthropic==0.3.11
+uvicorn==0.23.2
+chromadb==0.3.26
