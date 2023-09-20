@@ -7,6 +7,15 @@
 node_modules/
 dist/
 
+# chromadb
+chromadb/
+
+# pre calculated embeddings
+pre_calculated_embeddings/
+
+# env file
+.env
+
 # Compiled Java class files
 *.class
 

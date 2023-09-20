@@ -2,6 +2,9 @@ import os
 import openai
 import logging
 import logging.handlers
+from dotenv import load_dotenv
+
+load_dotenv()
 
 current_directory = os.getcwd()
 if os.path.isdir(current_directory+"/logs/") == False:
@@ -17,7 +20,7 @@ my_logger.handlers = []
 my_logger.addHandler(handler)
 my_logger.addHandler(logging.StreamHandler())
 
-OPENAI_API_KEY = ''
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 openai.api_key = OPENAI_API_KEY
 chromadb_path = current_directory+"/src/embeddings/chromadb"

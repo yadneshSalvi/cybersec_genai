@@ -2,8 +2,21 @@ import chromadb
 from chromadb.utils import embedding_functions
 from .. import chromadb_path, OPENAI_API_KEY, openai_embedding_model, current_directory
 import pandas as pd
-import numpy as np
-import os
+import gdown
+
+# if technique embeddings not present download from notabug
+def download_csv_from_gdrive(type_='cve'):
+    if type_=='cve':
+        url = 'https://drive.google.com/file/d/12J75g-Xs7WBv-rvL3enW93Z4UxDlW446/view?usp=sharing'
+        output = current_directory+'/src/embeddings/chromadb/cve_embeddings_ada.csv'
+    elif type_=='technique':
+        url = 'https://drive.google.com/file/d/1bwCoyUQZlKisHg4JmmC0ZIAfdW3Vc_SL/view?usp=sharing'
+        output = current_directory+'/src/embeddings/chromadb/technique_embeddings_ada.csv'
+    gdown.download(url, output, quiet=False, fuzzy=True)
+    df = pd.read_csv(output)
+    print(df)
+    print(f'Loaded {type_} embeddings from drive with shape {df.shape}')
+    return df
 
 client = chromadb.PersistentClient(path=chromadb_path)
 
@@ -19,12 +32,9 @@ chroma_openai_cwe_collection = client.create_collection(
     )
 
 if chroma_openai_cwe_collection.count() == 0:
-    print("reading cve embeddings")
-    cve_df_path = os.path.join(
-        current_directory, 'src', 'embeddings', 
-        'pre_calculated_embeddings', 'CVE_embeddings_ada.csv')
-    cve_df = pd.read_csv(cve_df_path)
-    cve_df['embeddings'] = cve_df.embeddings.apply(eval).apply(list)#.apply(lambda x: x.tolist())
+    print("Loading cve embeddings from drive")
+    cve_df = download_csv_from_gdrive(type_='cve')
+    cve_df['embeddings'] = cve_df.embeddings.apply(eval).apply(list)
     cve_df['Technique'] = cve_df.Technique.apply(eval).apply(list)
     cve_df['Technique'] = cve_df.Technique.apply(lambda x: ", ".join(x))
     ids = [str(i) for i in range(len(cve_df))]
@@ -58,11 +68,8 @@ chroma_openai_attack_collection = client.create_collection(
     )
 
 if chroma_openai_attack_collection.count() == 0:
-    print("adding attack embeddings to chroma collection")
-    cve_attack_path = os.path.join(
-        current_directory, 'src', 'embeddings', 
-        'pre_calculated_embeddings', 'Technique_embeddings_ada.csv')
-    attack_df = pd.read_csv(cve_attack_path)
+    print("Loading attack embeddings from drive")
+    attack_df = download_csv_from_gdrive(type_='technique')
     attack_df['embeddings'] = attack_df.embeddings.apply(eval).apply(list)
     ids = [str(i) for i in range(len(attack_df))]
     documents = attack_df["description"].tolist()
@@ -75,6 +82,7 @@ if chroma_openai_attack_collection.count() == 0:
                 "technique_description_token_len": int(row["token_len"])
             }
         )
+    print("adding attack embeddings to chroma collection")
     chroma_openai_attack_collection.add(
         ids = ids,
         documents = documents,
