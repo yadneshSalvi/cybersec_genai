@@ -1,1 +1,1 @@
-docker run --publish 80:80 integrate_service_sync
+docker run --publish 80:80 cybersec_genai
