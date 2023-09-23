@@ -94,6 +94,28 @@ if chroma_openai_attack_collection.count() == 0:
 else:
     print("attack embeddings already in chroma collection")    
 
+severity_file_path = current_directory+'/src/nl_to_sql/severity.txt'
+with open(severity_file_path,'r') as f:
+    severities = [s.strip() for s in f.readlines()]
+
+chroma_openai_severity_collection = client.create_collection(
+        name = "chroma_openai_severity",
+        embedding_function=embedder,
+        get_or_create = True
+    )
+
+if chroma_openai_severity_collection.count() == 0:
+    ids = [str(i) for i in range(len(severities))]
+    documents = severities
+    print("adding severity embeddings to chroma collection")
+    chroma_openai_attack_collection.add(
+        ids = ids,
+        documents = documents
+    )
+    print("Finished adding severity embeddings to chroma collection")
+else:
+    print("severity embeddings already in chroma collection")   
+
 # CLIENT methods
 # # list all collections
 # client.list_collections()
