@@ -17,6 +17,12 @@ class StreamRequest(BaseModel):
 
 @router.post("/cve_to_attack_stream")
 async def cve_to_attack_stream(body: StreamRequest):
+    """
+    Args:
+        query (str): user query for which we want to find attack techniques
+    Returns:
+        StreamingResponse: gpt explanation and attack techniques
+    """
     try:
         query = body.query
         prompt_template, prompt = make_cve_to_attack_prompt(query)
@@ -35,6 +41,16 @@ async def cve_to_attack_stream(body: StreamRequest):
 
 @router.post("/cve_to_attack")
 async def cve_to_attack(body: StreamRequest):
+    """
+    Args:
+        query (str): user query for which we want to find attack techniques
+    Returns:
+        Json with following fields
+        gpt_prompt (str): the prompt sent to gpt
+        gpt_response (str): the response from gpt
+        gpt_attack_prediction (object): the attack prediction from gpt
+            contains field related_attacks which is a list of attacks
+    """
     try:
         query = body.query
         prompt_template, prompt = make_cve_to_attack_prompt(query)
@@ -68,6 +84,14 @@ class SimilarCVEsRequest(BaseModel):
 
 @router.post("/similar_cves")
 async def similar_cves(body: SimilarCVEsRequest):
+    """
+    Args:
+        query (str): user query for which we want to find attack techniques
+        num_cves (int): number of similar cves to return
+    Returns:
+        list of similar cves which contain objects with following fields
+            cve_name(str), cve_description(str), attack_techniques(list)
+    """
     try:
         query = body.query
         num_cves = body.num_cves
@@ -81,6 +105,17 @@ async def similar_cves(body: SimilarCVEsRequest):
 async def similar_cves_with_technique_descp(
         body: SimilarCVEsRequest
     ):
+    """
+    Args:
+        query (str): user query for which we want to find attack techniques
+        num_cves (int): number of similar cves to return
+    Returns:
+        list of similar cves which contain objects with following fields
+            cve_name(str), cve_description(str), 
+            attack_techniques list of objects with following fields
+                attack_technique_name(str)
+                attack_technique_description(str)
+    """
     try:
         query = body.query
         num_cves = body.num_cves

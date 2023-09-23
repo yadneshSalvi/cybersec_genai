@@ -13,6 +13,14 @@ class StreamRequest(BaseModel):
 
 @router.post("/qna_general")
 async def qna(body: StreamRequest):
+    """
+    Args:
+        question (str): user question for which we want to find answer
+    Returns:
+        Json with following fields
+        query (str): the question sent to gpt
+        response (str): the response from gpt
+    """
     try:
         question = body.question
         inputs = {
@@ -31,6 +39,12 @@ async def qna(body: StreamRequest):
 
 @router.post("/qna_general_stream")
 async def qna_stream(body: StreamRequest):
+    """
+    Args:
+        question (str): user question for which we want to find answer
+    Returns:
+        StreamingResponse: gpt explanation for user question
+    """
     try:
         question = body.question
         inputs = {

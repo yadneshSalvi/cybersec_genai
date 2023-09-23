@@ -12,6 +12,16 @@ class NLtoSQL(BaseModel):
 
 @router.post("/nl_to_sql")
 async def nl_to_sql(body: NLtoSQL):
+    """
+    Args:
+        query (str): user query for which we want to find attack techniques
+    Returns:
+        json object with following fields
+            query(str), 
+            most_relevant_severity(str), 
+            sql_query(str)
+    """
+
     try:
         query = body.query
         similar_severities = get_similar_severities(query)
