@@ -12,7 +12,25 @@ class StreamRequest(BaseModel):
     question: str
 
 @router.post("/qna_general")
-async def stream(body: StreamRequest):
+async def qna(body: StreamRequest):
+    try:
+        question = body.question
+        inputs = {
+            'question': question,
+        }
+        response = await gpt4.async_generate(
+            prompt=ask_gpt_prompt,
+            input_=inputs
+        )
+        return {
+            "query": question,
+            "response": response
+        }
+    except Exception as e:
+        traceback.print_exc()
+
+@router.post("/qna_general_stream")
+async def qna_stream(body: StreamRequest):
     try:
         question = body.question
         inputs = {
